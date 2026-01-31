@@ -1,10 +1,19 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const UNIVERSITY_NAME = "Institut Universitaire La Grace (IUG Ex-ECO.TE.S)";
+const UNIVERSITY_NAME = "Institut Universitaire La Grâce (IUG Ex-ECO.TE.S)";
 const OFFICIAL_WEBSITE = "www.iuguniversity.org";
 const OFFICIAL_EMAIL = "info@iuguniversity.org";
 const OFFICIAL_PHONES = "+2290198223211, +2290153321260";
+
+export type TextPosition = 
+  | 'Top (above images)' 
+  | 'Bottom (below images)' 
+  | 'Left of images' 
+  | 'Right of images' 
+  | 'Overlay - Left' 
+  | 'Overlay - Center' 
+  | 'Overlay - Right';
 
 export async function generateIUGFlyer(
   description: string,
@@ -12,7 +21,8 @@ export async function generateIUGFlyer(
   logoImage: { data: string; mimeType: string } | null,
   additionalPhones: string = "",
   language: 'English' | 'French' = 'French',
-  backgroundColor: string = "Blue and White"
+  backgroundColor: string = "Blue and White",
+  textPosition: TextPosition = 'Bottom (below images)'
 ): Promise<string> {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
@@ -22,24 +32,35 @@ export async function generateIUGFlyer(
     ROLE: Professional university flyer image generator for ${UNIVERSITY_NAME}.
     
     CORE OBJECTIVE:
-    Produce a single, clean, professional flyer image using:
-    1. EXACTLY ${imageCount} image(s) uploaded by the user. Do NOT duplicate, mirror, or invent images.
-    2. LANGUAGE: Strictly ${language}. All text must be in ${language}.
-    3. THEME: ${description}
-    4. BACKGROUND COLOR: ${backgroundColor}. 
-       - Apply soft gradients, smooth color blends, or subtle geometric shapes using ONLY these colors.
-       - Do NOT use noisy textures or photo backgrounds.
-       - Ensure high readability.
+    Produce a single, clean, professional flyer image.
+    
+    CRITICAL TEXT POSITIONING RULE:
+    - Place all main flyer text (event title, description, details) ONLY in the following position: "${textPosition}".
+    - Do NOT relocate text for aesthetic reasons.
+    - If "Overlay" is chosen, ensure high contrast and readability.
+    
+    CRITICAL IMAGE HANDLING RULE:
+    - Use EXACTLY ${imageCount} image(s) provided by the user. 
+    - Do NOT duplicate, mirror, or invent images.
+    
+    LANGUAGE CONTROL:
+    - Language: Strictly ${language}. All text MUST be in ${language}.
+    
+    UNIVERSITY NAME & ACCENT LOCK:
+    - University Name: "${UNIVERSITY_NAME}" (with the 'â' in Grâce).
+    - NEVER replace "â" with "a". NEVER remove accents.
+    - Color: Blue and White ONLY.
+    - Position: TOP SECTION ONLY.
     
     MANDATORY BRANDING RULES:
-    - TOP SECTION: University Name "${UNIVERSITY_NAME}" (Text in Blue and White) and the official logo.
+    - TOP SECTION: Logo + University Name.
     - BOTTOM SECTION: 
       Website: ${OFFICIAL_WEBSITE}
       Email: ${OFFICIAL_EMAIL}
       Phone: ${OFFICIAL_PHONES} ${additionalPhones ? ', ' + additionalPhones : ''}
     
-    CONSTRAINTS:
-    - Use ONLY the provided images.
+    DESIGN STYLE:
+    - Background Colors: ${backgroundColor}.
     - Academic, professional visual style.
     - Clear hierarchy and excellent readability.
     - Output ONLY the final flyer image.
@@ -57,7 +78,7 @@ export async function generateIUGFlyer(
     });
   }
 
-  // Add user images - strictly used as requested
+  // Add user images
   userImages.forEach((img) => {
     parts.push({
       inlineData: {

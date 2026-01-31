@@ -1,12 +1,13 @@
 
 import React, { useState, useRef } from 'react';
-import { generateIUGFlyer } from './services/geminiService';
+import { generateIUGFlyer, TextPosition } from './services/geminiService';
 import { LoadingOverlay } from './components/LoadingOverlay';
 
 const App: React.FC = () => {
   const [description, setDescription] = useState('');
   const [language, setLanguage] = useState<'English' | 'French'>('French');
   const [backgroundColor, setBackgroundColor] = useState('Blue and White');
+  const [textPosition, setTextPosition] = useState<TextPosition>('Bottom (below images)');
   const [additionalPhones, setAdditionalPhones] = useState('');
   const [userImages, setUserImages] = useState<{ data: string; mimeType: string }[]>([]);
   const [logoImage, setLogoImage] = useState<{ data: string; mimeType: string } | null>(null);
@@ -22,6 +23,16 @@ const App: React.FC = () => {
     { name: 'Navy & Gold', value: 'Navy Blue and Gold' },
     { name: 'Professional Grey', value: 'Dark Grey and Silver' },
     { name: 'Academic Green', value: 'Deep Green and White' },
+  ];
+
+  const TEXT_POSITIONS: TextPosition[] = [
+    'Top (above images)',
+    'Bottom (below images)',
+    'Left of images',
+    'Right of images',
+    'Overlay - Left',
+    'Overlay - Center',
+    'Overlay - Right'
   ];
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'user' | 'logo') => {
@@ -68,7 +79,8 @@ const App: React.FC = () => {
         logoImage,
         additionalPhones,
         language,
-        backgroundColor
+        backgroundColor,
+        textPosition
       );
       setGeneratedImage(result);
     } catch (err: any) {
@@ -104,7 +116,7 @@ const App: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900 leading-tight">IUG Flyer AI</h1>
-              <p className="text-xs font-semibold text-[#0047AB] uppercase tracking-widest">STRICT BRANDING MODE</p>
+              <p className="text-xs font-semibold text-[#0047AB] uppercase tracking-widest">PRECISION MODE</p>
             </div>
           </div>
           <button 
@@ -126,21 +138,35 @@ const App: React.FC = () => {
               Configuration
             </h2>
             <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-slate-600 mb-2">Target Language</label>
-                <div className="flex p-1 bg-slate-100 rounded-xl">
-                  <button
-                    onClick={() => setLanguage('French')}
-                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${language === 'French' ? 'bg-white shadow-sm text-[#0047AB]' : 'text-slate-500 hover:text-slate-700'}`}
-                  >
-                    Français
-                  </button>
-                  <button
-                    onClick={() => setLanguage('English')}
-                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${language === 'English' ? 'bg-white shadow-sm text-[#0047AB]' : 'text-slate-500 hover:text-slate-700'}`}
-                  >
-                    English
-                  </button>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-600 mb-2">Language</label>
+                  <div className="flex p-1 bg-slate-100 rounded-xl">
+                    <button
+                      onClick={() => setLanguage('French')}
+                      className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all ${language === 'French' ? 'bg-white shadow-sm text-[#0047AB]' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      Français
+                    </button>
+                    <button
+                      onClick={() => setLanguage('English')}
+                      className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all ${language === 'English' ? 'bg-white shadow-sm text-[#0047AB]' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      English
+                    </button>
+                  </div>
+                </div>
+                <div>
+                   <label className="block text-sm font-medium text-slate-600 mb-2">Text Position</label>
+                   <select 
+                    value={textPosition}
+                    onChange={(e) => setTextPosition(e.target.value as TextPosition)}
+                    className="w-full px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium text-slate-700 focus:ring-2 focus:ring-[#0047AB] outline-none"
+                   >
+                     {TEXT_POSITIONS.map(pos => (
+                       <option key={pos} value={pos}>{pos}</option>
+                     ))}
+                   </select>
                 </div>
               </div>
 
@@ -302,7 +328,7 @@ const App: React.FC = () => {
 
       {/* Footer Info */}
       <footer className="max-w-4xl mx-auto px-4 mt-20 text-center text-slate-400 text-sm">
-        <p>© {new Date().getFullYear()} Institut Universitaire La Grace (IUG). Strictly Institutional.</p>
+        <p>© {new Date().getFullYear()} Institut Universitaire La Grâce (IUG). Strictly Institutional.</p>
         <div className="mt-2 flex items-center justify-center gap-4">
           <a href="https://www.iuguniversity.org" target="_blank" className="hover:text-[#0047AB] transition-colors">www.iuguniversity.org</a>
           <span className="text-slate-300">•</span>
