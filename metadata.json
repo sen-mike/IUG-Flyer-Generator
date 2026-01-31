@@ -1,0 +1,7 @@
+{
+  "name": "IUG AI Flyer Generator",
+  "description": "A professional AI-powered tool for generating academic and event flyers for Institut Universitaire La Grace (IUG), ensuring strict adherence to university branding guidelines.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
